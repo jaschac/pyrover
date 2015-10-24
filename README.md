@@ -73,17 +73,53 @@ The pyrover package contains all the modules required to simulate a NASA expedit
 #### Modules
 The pyrover package contains the following modules:
 
- - **Mars**
- @todo
+##### Mars
+This module represents the surface over which the rover(s) will land and move. The planet has the following properties:
+
+ - A name.
+ - A two-dimensional size, represented by x and y.
+ - An implicit rectangular shape, with the aforementioned size.
+ - A surface, also referred to as plateau, which tracks the objects that are currently over it. Each object is tracked through a unique ID and its co-ordinates. 
+```bash
+	0,Y             X,Y
+	+---+---+---+---+
+	|   |   |   |   |
+	+---------------+
+	|   |   |   |   |
+	+---------------+
+	|   |   |   |   |
+	+---+---+---+---+
+	0,0              X,0
+```
+
+The module is responsible of:
+
+ - Keeping track of the current position of the objects that are over it.
+	 - If an object moves out of the surface of the planet (out of bounds), it is removed from the internal representation of the plateau.
+ - Raising specific exceptions whenever an object demands to occupy an illegal position.
+	 - Any position whose x or y co-ordinates are negative integers raises an Illegal Position exception.
+	 - Any position whose x or y co-ordinates are out of the surface raises an Out of Bounds exception.
+
+The module has no knowledge of the objects that are over it, and thus of their properties. As such, the module representing the object placed/moving over the planet is responsible of:
+
+ - Calculating the (new) position co-ordinates.
+ - Handling any exception raised by the planet when interacting with it.
 
  - **Mission**
  @todo
+ 
  - **Rover**
  @todo
 
 #### Unit Tests
-Each module comes with its set of unit tests.
-@todo: give an example to run them.
+Each module comes with its set of unit tests. The whole suite of tests should be executed before merging and branch into the master.
+```bash
+# running the unit test of the Mars module
+python -m pyrover.tests.mars
+----------------------------------------------------------------------
+Ran 12 tests in 0.001s
+OK
+```
 
 ## Setup
 In order to use pyrover, the module itself, and its dependencies, must be installed first. This should be done in a virtual environment, since this would rule out different versions of Python and packages colliding.
