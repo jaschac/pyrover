@@ -90,27 +90,30 @@ In order to use pyrover, the module itself, and its dependencies, must be instal
 
 The following installation steps assume Git, pip and Python3 already installed in the system.
 
- 1. Clone the repository into a local folder:
- ```
- $ git clone git@bitbucket.org:lostinmalloc/pyrover.git pyrover
- ```
- 2. Create and activate a virtual environment:
- ```
- $ PYROVER_HOME=$HOME/virtualenvs/pyrover
- $ PYTHON3_BIN=/usr/local/bin/python3
- $ virtualenv --python=$PYTHON3_BIN --system-site-packages $PYROVER_HOME
- $ source $PYROVER_HOME/bin/activate
- ```
- 3. Install the dependencies
- ```
- $ cd pyrover
- $ pip install -r requirements.txt
- ```
- 4. Install pyrover
- ```
- $ python setup.py sdist
- $ pip install dist/pyrover-<VERSION>.tar.gz
- ```
+1) Clone the repository into a local folder:
+```bash
+$ git clone git@bitbucket.org:lostinmalloc/pyrover.git pyrover
+```
+
+2) Create and activate a virtual environment:
+```bash
+$ PYROVER_HOME=$HOME/virtualenvs/pyrover
+$ PYTHON3_BIN=/usr/local/bin/python3
+$ virtualenv --python=$PYTHON3_BIN --system-site-packages $PYROVER_HOME
+$ source $PYROVER_HOME/bin/activate
+```
+
+3) Install the dependencies
+```bash
+$ cd pyrover
+$ pip install -r requirements.txt
+```
+
+4) Install pyrover
+```bash
+$ python setup.py sdist
+$ pip install dist/pyrover-<VERSION>.tar.gz
+```
 
 ## Usage
 @todo
