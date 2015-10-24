@@ -27,3 +27,52 @@ class Mars(object):
         Returns a user-friendly description of the planet.
         '''
         return "Planet %s has dimensions %s and %s." % (self._name, self._width, self._height)
+
+
+    def update_plateau(self, object_id, object_new_x, object_new_y):
+        '''
+        Validates and updates the new position of an object currently moving on the planet.
+        '''
+        if not isinstance(object_new_x, int) or not isinstance(object_new_y, int):
+            raise ValueError("The new position of an object must be represented by two integers, not %s and %s." % (object_new_x, object_new_y))
+
+        # Invalid position
+        if object_new_x < 0 or object_new_y < 0:
+            message = "Object %s's position (%s, %s) is not valid." % (object_id, object_new_x, object_new_y) 
+            raise InvalidPosition(message)
+
+        # Out of bounds position
+        elif object_new_x >= self._width or object_new_y >= self._height:
+
+            # The object moved out of the plateau
+            if object_id in self._plateau.keys():
+                del self._plateau[object_id]
+                message = "%s was lost on %s moving towards %s, %s!" % (object_id, self._name, object_new_x, object_new_y)
+
+            # The object was lost during the landing
+            elif object_id not in self._plateau.keys():
+                message = "%s never made it to %s!" % (object_id, self._name)
+
+            else:
+                raise Exception("This should never happen.")
+
+            raise OutOfBounds("%s" % (message))
+
+        # Valid position
+        elif object_new_x < self._width and object_new_y < self._height:
+            self._plateau[object_id] = (object_new_x, object_new_y)
+
+
+
+class InvalidPosition(Exception):
+    '''
+    This class represents an invalid position on the plateau.
+    '''
+    pass
+
+
+class OutOfBounds(Exception):
+    '''
+    This class represents a position out of the plateau's boundaries.
+    '''
+    pass
