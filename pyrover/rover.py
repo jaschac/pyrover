@@ -6,23 +6,29 @@ This module represent a Rover, a possible crew member of a NASA's expedition.
 
 from uuid import uuid4
 
+from pyrover.mars import Mars
+
 
 class Rover(object):
     '''
     This class represent a Rover bot and its properties.
     '''
-    def __init__(self, landing_coords, instructions=''):
+    def __init__(self, landing_coords, destination, instructions=''):
         '''
         This methods takes care of initializing a new Rover. A rover must be at least assigned the
         landing co-ordinates where it will try to touch the alien surface. The landing zone is a
         ternary representing the x and y co-ordinates and direction the rover will face. It is
         expected to be sent as a dictionary with the 'x', 'y' and 'facing' keys properly set.
 
+        A target destination must also be given to the rover. It is expected to be an instance of
+        the Mars class.
+
         A rover is supposed to execute instructions upon arrival, but this is not mandatory. For
         this reason, if a rover is not given any instruction, it will simply stay where it landed,
         if it safely did.
         '''
         self._current_position = None
+        self._destination = destination
         self._id = "rover_%s" % uuid4()
         self._instructions = instructions
         self._landing_coords = landing_coords
@@ -39,6 +45,9 @@ class Rover(object):
             raise ValueError('The landing_coords are expected to have three values: x, y and facing.')
         if self._landing_coords['facing'] not in self._valid_cardinal_point:
             raise ValueError('The rover cannot face %s, but only: %s' % (self._landing_coords['facing'], ', '.join(self._valid_cardinal_point)))
+
+        if not isinstance(self._destination, Mars):
+            raise TypeError("The target destination must be Mars, not %s!" % (type(self._destination)))
 
         if not isinstance(self._instructions, str):
             raise TypeError("The instructions a rover must execute are expected as a string, not %s." % (type(self._instructions)))
