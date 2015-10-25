@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='pyrover',
-    version='0.0.1',
+    version='0.1.1',
     author='Jascha Casadio',
     author_email='jaschacasadio@gmail.com',
     packages=   [
@@ -15,7 +15,7 @@ setup(
     long_description="A Python package to simulate NASA's expeditions",
     requires=[],
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 1 - Alpha",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     	"Programming Language :: Python :: 3.4.3",
     ],
