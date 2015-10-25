@@ -154,14 +154,15 @@ Ran 11 tests in 0.001s
 OK
 
 # running all of them
-$ for module in rover mars; do python -m pyrover.tests.$module; done
+$ for module in rover mars mission; do python -m pyrover.tests.$module; done
 ----------------------------------------------------------------------
-Ran 27 tests in 0.006s
+Ran 27 tests in 0.005s
 OK
-
 ----------------------------------------------------------------------
-Ran 11 tests in 0.002s
-
+Ran 11 tests in 0.001s
+OK
+----------------------------------------------------------------------
+Ran 8 tests in 0.002s
 OK
 ```
 
@@ -196,4 +197,20 @@ $ pip install dist/pyrover-<VERSION>.tar.gz
 ```
 
 ## Usage
-@todo
+In order to use pyrover:
+
+ 1. The pyrover package and its dependencies must be properly installed.
+ 2. A valid input file containing the mission's blueprints must be provided.
+
+Here is a working example. The example assumes an input file called 'example.in' in the current working directory.
+```python
+>>> from pyrover.mission import Mission
+>>> input_file = 'example.in'
+>>> handle_mission = Mission(input_file)
+>>> handle_mission.setup()
+>>> handle_mission.start()
+>>> mission_outcome = handle_mission.outcome
+>>> print(mission_outcome)
+1 3 N
+5 1 E
+```
