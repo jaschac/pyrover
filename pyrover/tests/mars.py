@@ -42,8 +42,8 @@ class TestMars(TestCase):
         for planet_width, planet_height in ((100, 10), (10, 0), (1, -0), (0, 10), (-0, 20), (0, 0), (-0, -0)):
             handle_mars = Mars(planet_width, planet_height)
             self.assertIsInstance(handle_mars, Mars)
-            self.assertEqual(handle_mars._height, planet_height)
-            self.assertEqual(handle_mars._width, planet_width)
+            self.assertEqual(handle_mars._height, planet_height + 1)
+            self.assertEqual(handle_mars._width, planet_width + 1)
             self.assertEqual(handle_mars._name, 'Mars')
             self.assertIsInstance(handle_mars._height, int)
             self.assertIsInstance(handle_mars._width, int)
@@ -58,7 +58,7 @@ class TestMars(TestCase):
         Tests that a ValueError exception is raised if the mandatory parameters required by Mars
         are given but their value is not valid.
         '''
-        for planet_width, planet_height in ((100, -1), (0, -1), (-1, 0), (-10, 10), (-1, -2)):
+        for planet_width, planet_height in ((100, -2), (0, -2), (-2, 0), (-10, 10), (-2, -2)):
             self.assertRaises(
                                 ValueError,
                                 Mars,
@@ -94,7 +94,7 @@ class TestMars(TestCase):
         Tests that a properly instantiated Mars object returns name and dimension when printed.
         '''
         handle_mars = Mars(self.valid_width, self.valid_height)
-        expected_response = "Planet Mars has dimensions %s and %s." % (self.valid_width, self.valid_height)
+        expected_response = "Planet Mars has dimensions %s and %s." % (self.valid_width+1, self.valid_height+1)
         response = handle_mars.__str__()
         self.assertEqual(response, expected_response)
         del handle_mars
@@ -176,7 +176,7 @@ class TestMars(TestCase):
         Tests that an OutOfBounds exception is raised if an object tries to move to a valid
         position that anyway lies out of the boundaries of the surface of the planet.
         '''
-        for out_of_bounds_positions in ([self.valid_width, self.valid_height+1], [self.valid_width+1, self.valid_height], [self.valid_width+1, self.valid_height+1], [1,-1], [-1,-1], [-1,1]):
+        for out_of_bounds_positions in ([self.valid_width, self.valid_height+2], [self.valid_width+2, self.valid_height], [self.valid_width+2, self.valid_height+2], [1,-1], [-1,-1], [-1,1]):
             handle_mars = self.aux_generate_handle_mars()
             object_id = ['test_rover_1234']
             self.assertRaises(
@@ -192,7 +192,7 @@ class TestMars(TestCase):
         planet tries to move to a valid position that anyway lies out of the boundaries of the
         surface of the planet itself.
         '''
-        for out_of_bounds_positions in ([self.valid_width, self.valid_height+1], [self.valid_width+1, self.valid_height], [self.valid_width+1, self.valid_height+1]):
+        for out_of_bounds_positions in ([self.valid_width, self.valid_height+2], [self.valid_width+2, self.valid_height], [self.valid_width+2, self.valid_height+2]):
             handle_mars = self.aux_generate_handle_mars()
             object_id = 'test_rover_1234'
             handle_mars.update_plateau(object_id, self.valid_width, self.valid_height)

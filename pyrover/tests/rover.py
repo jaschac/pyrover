@@ -382,13 +382,12 @@ class TestRover(TestCase):
         mars_x, mars_y = 1, 1
         handle_mars = self.aux_generate_handle_mars(mars_x, mars_y)
         landing_coords = {'x' : 0, 'y' : 0, 'facing' : 'N'}
-        instructions = 'M'
+        instructions = 'MM'
         handle_rover = self.aux_generate_handle_rover(landing_coords, handle_mars, instructions)
         handle_rover.send()
         handle_rover.execute_instructions()
         self.assertEqual(handle_rover._status, 'LOST')
         self.assertEqual(handle_rover._current_position, None)
-        self.assertEqual(handle_rover._last_known_position, landing_coords)
         del handle_mars
         del handle_rover
 

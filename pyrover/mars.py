@@ -21,6 +21,10 @@ class Mars(object):
         if self._width < 0 or self._height < 0:
             raise ValueError("The dimensions of a planet must be both positive integers.")
 
+        # increase _height and _width so that a planet with dimension 5,5 has _height, _width both equal to 5
+        self._height += 1
+        self._width += 1
+        
 
     def __str__(self):
         '''
