@@ -2,6 +2,7 @@
 
 #### **Table of Contents**
 1. [Overview](#overview)
+    * [Development](#development)
 2. [Problem Description](#problem-description)
     * [Input](#input)
     * [Output](#output)
@@ -10,7 +11,6 @@
     * [Unit Tests](#unit-tests)
 4. [Setup](#setup)
 5. [Usage](#usage)
-6. [Reference](#reference)
 
 ## Overview
 This package simulates the NASA sending rover(s) on expedition to exotic locations far away from us. It allows the client to define the target planet properties, as well as the number of rovers that will be sent over, including the instructions they must execute once landed. 
@@ -20,6 +20,16 @@ An expedition is made up of the following:
  - A **destination** which is an unknown location to explore. Mars is the only available option.
  - A **crew** which is the team that will be sent to the destination. Rovers are the only option.
  - A **mission** which represents the overall operation. It includes a target destination as well as the crew that will be sent over. Each member of the crew is given instructions to execute upon landing.
+
+#### Development
+The pyrover package has been developed with the following setuo:
+
+ - Debian 7 Wheezy (3.2.68-1+deb7u5 x86_64)
+ - Python 3.4.3
+	 - pip 7.1.2
+	 - virtualenv 13.1.2
+
+For pyrover's dependencies, check the Usage section.
 
 ## Problem Description
 A squad of robotic rovers are to be landed by NASA on a plateau on Mars. This plateau, which is curiously rectangular, must be navigated by the rovers so that their on-board cameras can get a complete view of the surrounding terrain to send back to Earth.
@@ -186,7 +196,4 @@ $ pip install dist/pyrover-<VERSION>.tar.gz
 ```
 
 ## Usage
-@todo
-
-## Reference
 @todo
