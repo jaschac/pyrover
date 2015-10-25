@@ -104,20 +104,54 @@ The module has no knowledge of the objects that are over it, and thus of their p
 
  - Calculating the (new) position co-ordinates.
  - Handling any exception raised by the planet when interacting with it.
-
- - **Mission**
- @todo
  
- - **Rover**
- @todo
+##### Rover
+This class represents the only crew member available to participate to a NASA's mission. It represent a robotic machine that is sent over to the target destination and that, if able to safely land at the desired co-ordinates, will execute instructions.
+
+A rover has the following properties:
+
+ - A unique ID, which is automatically generated when an object is instantiated.
+ - A status, that tells if the rover is still alive or got lost.
+	 - A rover can get lost in two different occasions:
+		 - During landing, if the landing co-ordinates are not on the planet's surface. When this happens, the rover never makes it to the planet and as such:
+			 - It does not execute any instruction.
+			 - Both its current and last known positions are null.
+		 - Once safely landed, when moving throughout the planet, if its instructions gets it out of the planet's surface. In this case:
+			 - The current position of the rover is null.
+			 - The last known position of the rover is available and can be used to investigate where it was last seen before losing contact.
+ - A current position, which tells the NASA where the rover is currently at. It is a ternary made of the x and y co-ordinates, and the direction it is facing. It corresponds to the landing co-ordinates upon arrival to destination, before the instructions get executed.
+ - A last known position, which, unless the rover is lost, equals the current position.
+ - A set of instructions to execute. The rover also accepts being sent over to the target destination without any instruction to execute. When this happens both the current and last known positions correspond to the landing position, assuming it safely lands onto the surface.
+
+In order to properly instantiate a rover, it must be provided with the following information:
+
+ - A target destination.
+ - A landing position.
+ - Optionally, it can be provided wit ha set of instructions to execute upon arrival. No instruction is executed by default.
+
+There are two operations that can be performed on a rover, once created:
+
+ - The rover can be sent to the target destination. This operation is responsible of the landing of the rover onto the surface of the target planet. Since the landing co-ordinates could be wrong, the rover could get lost during this phase. When this happens, it won't be able to execute any instruction and its position is unknown.
+ - The rover can be told to execute the instructions it was given when created. Starting from the landing zone, it will execute all of them, one by one, sequentially. At each step the rover can end up out of the planet surface. When this happens, the rover is lost. Its last known position is still available to the NASA. If the rover is instead able to fully complete its job, its final position is also known.
 
 #### Unit Tests
 Each module comes with its set of unit tests. The whole suite of tests should be executed before merging and branch into the master.
 ```bash
-# running the unit test of the Mars module
-python -m pyrover.tests.mars
+# running the unit tests of the Mars module
+$ python -m pyrover.tests.mars
 ----------------------------------------------------------------------
-Ran 12 tests in 0.001s
+Ran 11 tests in 0.001s
+OK
+
+# running all of them
+$ for module in rover mars; do python -m pyrover.tests.$module; done
+----------------------------------------------------------------------
+Ran 27 tests in 0.006s
+OK
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.002s
+
 OK
 ```
 
