@@ -36,13 +36,8 @@ class Mars(object):
         if not isinstance(object_new_x, int) or not isinstance(object_new_y, int):
             raise ValueError("The new position of an object must be represented by two integers, not %s and %s." % (object_new_x, object_new_y))
 
-        # Invalid position
-        if object_new_x < 0 or object_new_y < 0:
-            message = "Object %s's position (%s, %s) is not valid." % (object_id, object_new_x, object_new_y) 
-            raise InvalidPosition(message)
-
         # Out of bounds position
-        elif object_new_x >= self._width or object_new_y >= self._height:
+        if object_new_x >= self._width or object_new_y >= self._height or object_new_x < 0 or object_new_y < 0:
 
             # The object moved out of the plateau
             if object_id in self._plateau.keys():
@@ -62,13 +57,6 @@ class Mars(object):
         elif object_new_x < self._width and object_new_y < self._height:
             self._plateau[object_id] = (object_new_x, object_new_y)
 
-
-
-class InvalidPosition(Exception):
-    '''
-    This class represents an invalid position on the plateau.
-    '''
-    pass
 
 
 class OutOfBounds(Exception):

@@ -7,7 +7,7 @@ This module tests the correct behaviour of Rover.
 from copy import deepcopy
 from unittest import main, TestCase
 
-from pyrover.mars import InvalidPosition, Mars, OutOfBounds
+from pyrover.mars import Mars, OutOfBounds
 from pyrover.rover import Rover
 
 
@@ -242,27 +242,17 @@ class TestRover(TestCase):
         self.assertEqual(handle_rover._last_known_position, self.valid_landing_coords)
         del handle_rover
 
-    def test_send_wrong_invalid_landing_coordinates(self):
-        '''
-        Tests that a rover is lost if the landing co-ordinates are invalid.
-        '''
-        invalid_landing_coords = deepcopy(self.valid_landing_coords)
-        invalid_landing_coords['x'] = -1
-        handle_rover = self.aux_generate_handle_rover(invalid_landing_coords)
-        handle_rover.send()
-        self.assertEqual(handle_rover._status, 'LOST')
-        del handle_rover
-
     def test_send_wrong_out_of_bounds(self):
         '''
         Tests that a rover is lost if the landing co-ordinates are valid but out of bounds.
         '''
-        invalid_landing_coords = deepcopy(self.valid_landing_coords)
-        invalid_landing_coords['x'] *= 2
-        handle_rover = self.aux_generate_handle_rover(invalid_landing_coords)
-        handle_rover.send()
-        self.assertEqual(handle_rover._status, 'LOST')
-        del handle_rover
+        for invalid_x in (self.valid_landing_coords['x'] * 2, -1):
+            invalid_landing_coords = deepcopy(self.valid_landing_coords)
+            invalid_landing_coords['x'] = invalid_x
+            handle_rover = self.aux_generate_handle_rover(invalid_landing_coords)
+            handle_rover.send()
+            self.assertEqual(handle_rover._status, 'LOST')
+            del handle_rover
 
 
 if __name__ == '__main__':

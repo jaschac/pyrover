@@ -6,7 +6,7 @@ This module tests the correct behaviour of planet Mars.
 
 from unittest import main, TestCase
 
-from pyrover.mars import InvalidPosition, Mars, OutOfBounds
+from pyrover.mars import Mars, OutOfBounds
 
 
 class TestMars(TestCase):
@@ -143,21 +143,6 @@ class TestMars(TestCase):
         self.assertEqual((moving_object['new_position']['x'],moving_object['new_position']['y']), handle_mars._plateau[moving_object['id']])
         del handle_mars
 
-    def test_update_plateau_wrong_invalid_position(self):
-        '''
-        Tests that an InvalidPosition exception is raised if an object tries to move to an invalid
-        position, that is a position whose any of the co-ordinates is a negative integer.
-        '''
-        for invalid_positions in ([1,-1], [-1,-1], [-1,1]):
-            handle_mars = self.aux_generate_handle_mars()
-            object_id = ['test_rover_1234']
-            self.assertRaises(
-                                InvalidPosition,
-                                handle_mars.update_plateau,
-                                *object_id + invalid_positions
-                                )
-            del handle_mars
-
     def test_update_plateau_wrong_missing_mandatory_args(self):
         '''
         Tests that a TypeError exception is raised if an object tries to a position without passing
@@ -191,7 +176,7 @@ class TestMars(TestCase):
         Tests that an OutOfBounds exception is raised if an object tries to move to a valid
         position that anyway lies out of the boundaries of the surface of the planet.
         '''
-        for out_of_bounds_positions in ([self.valid_width, self.valid_height+1], [self.valid_width+1, self.valid_height], [self.valid_width+1, self.valid_height+1]):
+        for out_of_bounds_positions in ([self.valid_width, self.valid_height+1], [self.valid_width+1, self.valid_height], [self.valid_width+1, self.valid_height+1], [1,-1], [-1,-1], [-1,1]):
             handle_mars = self.aux_generate_handle_mars()
             object_id = ['test_rover_1234']
             self.assertRaises(

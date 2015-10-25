@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='pyrover',
-    version='0.1.4',
+    version='0.1.5',
     author='Jascha Casadio',
     author_email='jaschacasadio@gmail.com',
     packages=   [

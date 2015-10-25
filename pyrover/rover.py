@@ -7,7 +7,7 @@ This module represent a Rover, a possible crew member of a NASA's expedition.
 from copy import deepcopy
 from uuid import uuid4
 
-from pyrover.mars import InvalidPosition, Mars, OutOfBounds
+from pyrover.mars import Mars, OutOfBounds
 
 
 class Rover(object):
@@ -35,7 +35,7 @@ class Rover(object):
         self._landing_coords = landing_coords
         self._last_known_position = None
         self._status = 'ALIVE'
-        self._valid_cardinal_point = ['E', 'N', 'S', 'W']
+        self._valid_cardinal_point = ['N', 'E', 'S', 'W']
         self._valid_movements = ['M']
         self._valid_rotations = ['L', 'R']
         self._valid_statuses = ['ALIVE', 'LOST']
@@ -80,5 +80,5 @@ class Rover(object):
             self._destination.update_plateau(self._id, self._landing_coords['x'], self._landing_coords['y'])
             self._current_position = deepcopy(self._landing_coords)
             self._last_known_position = deepcopy(self._landing_coords)
-        except (InvalidPosition, OutOfBounds) as e:
+        except OutOfBounds as e:
             self._status = 'LOST'
