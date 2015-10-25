@@ -5,6 +5,8 @@ This module tests the correct behaviour of Rover.
 '''
 
 from copy import deepcopy
+from pdb import set_trace
+from pprint import pprint
 from unittest import main, TestCase
 
 from pyrover.mars import Mars, OutOfBounds
@@ -253,6 +255,204 @@ class TestRover(TestCase):
             handle_rover.send()
             self.assertEqual(handle_rover._status, 'LOST')
             del handle_rover
+
+    def test_execute_instructions_correct_lost_at_landing_no_instruction_executed(self):
+        '''
+        Tests that a rover that is lost during landing does not execute any instruction at all.
+        This can be proved by checking the initial status of the rover, which is 'LOST', as well as
+        its current and last known positions, which are both null.
+        '''
+        mars_x, mars_y = 1, 1
+        handle_mars = self.aux_generate_handle_mars(mars_x, mars_y)
+        bad_landing_coords = {'x' : mars_x + 1, 'y' : mars_y + 1, 'facing' : 'N'}
+        instructions = 'M'
+        handle_rover = self.aux_generate_handle_rover(bad_landing_coords, handle_mars, instructions)
+        expected_final_position = handle_rover._calculate_new_position(x=bad_landing_coords['x'], y=bad_landing_coords['y'],facing=bad_landing_coords['facing'])
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'LOST')
+        self.assertEqual(handle_rover._current_position, None)
+        self.assertEqual(handle_rover._last_known_position, None)
+        self.assertTrue(handle_rover._current_position != expected_final_position)
+        del handle_mars
+        del handle_rover
+
+    def test_execute_instructions_correct_no_instructions_given(self):
+        '''
+        Tests that a rover that has safely landed onto the planet ends up in the same position
+        where it has landed if it has no instruction to execute.
+        '''
+        no_instructions = ''
+        handle_rover = self.aux_generate_handle_rover(instructions=no_instructions)
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'ALIVE')
+        self.assertEqual(handle_rover._landing_coords, handle_rover._last_known_position)
+        self.assertEqual(handle_rover._current_position, handle_rover._last_known_position)
+        del handle_rover
+
+    def test_execute_instructions_correct_all_instructions_executed(self):
+        '''
+        Tests that a rover that has safely landed onto the planet executes all its instructions and
+        ends up in the expected position, if it does not fall out of bounds.
+        '''
+        instructions = 'M'
+        handle_rover = self.aux_generate_handle_rover(instructions=instructions)
+        handle_rover.send()
+        expected_final_position = handle_rover._calculate_new_position(x=self.valid_landing_coords['x'], y=self.valid_landing_coords['y'],facing=self.valid_landing_coords['facing'])
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'ALIVE')
+        current_position_x, current_position_y = handle_rover._current_position['x'], handle_rover._current_position['y']
+        self.assertEqual((current_position_x, current_position_y), expected_final_position)
+        last_known_position_x, last_known_position_y = handle_rover._last_known_position['x'], handle_rover._last_known_position['y']
+        self.assertEqual((last_known_position_x, last_known_position_y), expected_final_position)
+        del handle_rover
+
+    def test_execute_instructions_correct_360_degrees_clockwise_rotation(self):
+        '''
+        Tests that a rover that has safely landed onto the planet correctly ends up in the same
+        position facing the same cardinal point if its executes a 360 degrees clockwise rotation.
+        '''
+        clockwise_rotation_instructions = 'RRRR'
+        expected_final_position = self.valid_landing_coords
+        handle_rover = self.aux_generate_handle_rover(instructions=clockwise_rotation_instructions)
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'ALIVE')
+        self.assertEqual(handle_rover._current_position, expected_final_position)
+        self.assertEqual(handle_rover._last_known_position, handle_rover._current_position)
+        del handle_rover
+
+    def test_execute_instructions_correct_360_degrees_counterclockwise_rotation(self):
+        '''
+        Tests that a rover that has safely landed onto the planet correctly ends up in the same
+        position facing the same cardinal point if its executes a 360 degrees counterclockwise
+        rotation.
+        '''
+        counterclockwise_rotation_instructions = 'LLLL'
+        expected_final_position = self.valid_landing_coords
+        handle_rover = self.aux_generate_handle_rover(instructions=counterclockwise_rotation_instructions)
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'ALIVE')
+        self.assertEqual(handle_rover._current_position, expected_final_position)
+        self.assertEqual(handle_rover._last_known_position, handle_rover._current_position)
+        del handle_rover
+
+    def test_execute_instructions_correct_movement(self):
+        '''
+        Tests that a rover that has safely landed onto the planet correctly ends up in the expected
+        position by moving once in a specifc direction from the current landing position, assuming
+        the new position is not out of bounds. 
+        '''
+        for facing in self.valid_cardinal_point:
+            landing_coords = {'x' : 5, 'y' : 5, 'facing' : facing}
+            instructions = 'M'
+            handle_rover = self.aux_generate_handle_rover(landing_coords=landing_coords, instructions=instructions)
+            expected_final_position = handle_rover._calculate_new_position(x=landing_coords['x'], y=landing_coords['y'],facing=landing_coords['facing'])
+            handle_rover.send()
+            handle_rover.execute_instructions()
+            self.assertEqual(handle_rover._status, 'ALIVE')
+            current_position_x, current_position_y = handle_rover._current_position['x'], handle_rover._current_position['y']
+            self.assertEqual((current_position_x, current_position_y), expected_final_position)
+            last_known_position_x, last_known_position_y = handle_rover._last_known_position['x'], handle_rover._last_known_position['y']
+            self.assertEqual((last_known_position_x, last_known_position_y), expected_final_position)
+            del handle_rover
+
+    def test_execute_instructions_correct_movement_doesnt_affect_facing(self):
+        '''
+        Tests that any valid movement of a rover that has safely landed onto the planet does not
+        affect the direction it is facing.
+
+        check facing is the same
+        '''
+        instructions = 'M'
+        handle_rover = self.aux_generate_handle_rover(instructions=instructions)
+        expected_final_facing = self.valid_landing_coords['facing']
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._current_position['facing'], expected_final_facing)
+        del handle_rover
+
+    def test_execute_instructions_correct_rover_is_lost_if_goes_out_of_bounds(self):
+        '''
+        Tests that a rover that has safely landed onto the planet gets lost if it moves out of
+        bounds.
+        '''
+        mars_x, mars_y = 1, 1
+        handle_mars = self.aux_generate_handle_mars(mars_x, mars_y)
+        landing_coords = {'x' : 0, 'y' : 0, 'facing' : 'N'}
+        instructions = 'M'
+        handle_rover = self.aux_generate_handle_rover(landing_coords, handle_mars, instructions)
+        handle_rover.send()
+        handle_rover.execute_instructions()
+        self.assertEqual(handle_rover._status, 'LOST')
+        self.assertEqual(handle_rover._current_position, None)
+        self.assertEqual(handle_rover._last_known_position, landing_coords)
+        del handle_mars
+        del handle_rover
+
+    def test_calculate_new_position_wrong_mistyped_squares(self):
+        '''
+        Tests that a TypeError exception is raised if _calculate_new_position is passed the
+        optional parameter squares but not as an integer.
+        '''
+        handle_rover = self.aux_generate_handle_rover()
+        for squares in [None, {}, 'not_an_int', [123]]:
+            self.assertRaises(
+                                TypeError,
+                                handle_rover._calculate_new_position,
+                                *[squares]
+                                )
+        del handle_rover
+
+    def test_calculate_new_position_correct_movement_north(self):
+        '''
+        Tests that t_calculate_new_position correctly returns the new expected position when moving
+        north. 
+        '''
+        landing_coords = {'x' : 2, 'y' : 2, 'facing' : 'N'}
+        handle_rover = self.aux_generate_handle_rover(landing_coords)
+        expected_response = (2, 3)
+        response = handle_rover._calculate_new_position(x=landing_coords['x'], y=landing_coords['y'], facing=landing_coords['facing'])
+        self.assertEqual(expected_response, response)
+        del handle_rover
+
+    def test_calculate_new_position_correct_movement_east(self):
+        '''
+        Tests that t_calculate_new_position correctly returns the new expected position when moving
+        east. 
+        '''
+        landing_coords = {'x' : 2, 'y' : 2, 'facing' : 'E'}
+        handle_rover = self.aux_generate_handle_rover(landing_coords)
+        expected_response = (3, 2)
+        response = handle_rover._calculate_new_position(x=landing_coords['x'], y=landing_coords['y'], facing=landing_coords['facing'])
+        self.assertEqual(expected_response, response)
+        del handle_rover
+
+    def test_calculate_new_position_correct_movement_south(self):
+        '''
+        Tests that t_calculate_new_position correctly returns the new expected position when moving
+        south. 
+        '''
+        landing_coords = {'x' : 2, 'y' : 2, 'facing' : 'S'}
+        handle_rover = self.aux_generate_handle_rover(landing_coords)
+        expected_response = (2, 1)
+        response = handle_rover._calculate_new_position(x=landing_coords['x'], y=landing_coords['y'], facing=landing_coords['facing'])
+        self.assertEqual(expected_response, response)
+        del handle_rover
+
+    def test_calculate_new_position_correct_movement_west(self):
+        '''
+        Tests that t_calculate_new_position correctly returns the new expected position when moving
+        west. 
+        '''
+        landing_coords = {'x' : 2, 'y' : 2, 'facing' : 'W'}
+        handle_rover = self.aux_generate_handle_rover(landing_coords)
+        expected_response = (1, 2)
+        response = handle_rover._calculate_new_position(x=landing_coords['x'], y=landing_coords['y'], facing=landing_coords['facing'])
+        self.assertEqual(expected_response, response)
+        del handle_rover
 
 
 if __name__ == '__main__':

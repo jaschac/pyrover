@@ -5,6 +5,8 @@ This module represent a Rover, a possible crew member of a NASA's expedition.
 '''
 
 from copy import deepcopy
+from pdb import set_trace
+from pprint import pprint
 from uuid import uuid4
 
 from pyrover.mars import Mars, OutOfBounds
@@ -82,3 +84,66 @@ class Rover(object):
             self._last_known_position = deepcopy(self._landing_coords)
         except OutOfBounds as e:
             self._status = 'LOST'
+
+
+    def execute_instructions(self):
+        '''
+        Executes the instructions assigned, as long as the rover has safely landed and is alive.
+        '''
+        for instruction in self._instructions:
+            if self._status is 'ALIVE':
+
+                current_facing = self._current_position['facing']
+                self._last_known_position['facing'] = current_facing
+
+                if instruction is 'M':
+                    new_position_x, new_position_y = self._calculate_new_position()
+                    try:
+                        self._destination.update_plateau(self._id, new_position_x, new_position_y)
+                        self._last_known_position['x'], self._last_known_position['y'] = new_position_x, new_position_y
+                        self._current_position['x'], self._current_position['y'] = new_position_x, new_position_y
+                    except OutOfBounds as e:
+                        self._status = 'LOST'
+                        self._current_position = None
+
+                elif instruction in ['L', 'R']:
+
+                    if instruction is 'L':
+                        try:
+                            self._current_position['facing'] = self._valid_cardinal_point[self._valid_cardinal_point.index(current_facing) - 1]
+                        except IndexError:
+                            self._current_position['facing'] = self._valid_cardinal_point[-1]
+
+                    elif instruction is 'R':
+                        try:
+                            self._current_position['facing'] = self._valid_cardinal_point[self._valid_cardinal_point.index(current_facing) + 1]
+                        except IndexError:
+                            self._current_position['facing'] = self._valid_cardinal_point[0]
+
+                    self._last_known_position['facing'] = self._current_position['facing']
+                    
+
+    def _calculate_new_position(self, squares=1, x=None, y=None, facing=None):
+        '''
+        Calculates the x,y co-ordinates the rover will try to move to.
+        '''
+        if not isinstance(squares, int):
+            raise TypeError("If passed, squares must be an integer, not %s." % (type(squares)))
+        
+        if facing is None:
+            facing = self._current_position['facing']
+        if x is None:
+            x = self._current_position['x']
+        if y is None:
+            y = self._current_position['y']
+
+        if facing is 'N':
+            return x, y + squares
+        elif facing is 'E':
+            return x + squares, y
+        elif facing is 'S':
+            return x, y - squares
+        elif facing is 'W':
+            return x - squares, y
+        else:
+            raise Exception('This should never happen.')
