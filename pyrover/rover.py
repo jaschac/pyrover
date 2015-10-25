@@ -4,9 +4,10 @@
 This module represent a Rover, a possible crew member of a NASA's expedition.
 '''
 
+from copy import deepcopy
 from uuid import uuid4
 
-from pyrover.mars import Mars
+from pyrover.mars import InvalidPosition, Mars, OutOfBounds
 
 
 class Rover(object):
@@ -54,6 +55,7 @@ class Rover(object):
         if any([i not in self._valid_movements + self._valid_rotations for i in self._instructions]):
             raise ValueError("The instructions a rover must execute can contain only the following values: %s" % ', '.join(self._valid_movements + self._valid_rotations))
 
+
     def __str__(self):
         '''
         Returns a user-friendly representation of a Rover.
@@ -66,3 +68,17 @@ class Rover(object):
             elif isinstance(self._last_known_position, dict):
                 message = "Rover %s was lost. Its last known position was %s, %s, facing %s." % (self._id, self._last_known_position['x'], self._last_known_position['y'], self._last_known_position['facing'])
         return message
+
+
+    def send(self):
+        '''
+        This method is responsible of the landing of the rover on the target destination. It does
+        take care of updating the rover's position and status, making sure to handle the case that
+        it never makes it to the surface.
+        '''
+        try:
+            self._destination.update_plateau(self._id, self._landing_coords['x'], self._landing_coords['y'])
+            self._current_position = deepcopy(self._landing_coords)
+            self._last_known_position = deepcopy(self._landing_coords)
+        except (InvalidPosition, OutOfBounds) as e:
+            self._status = 'LOST'
