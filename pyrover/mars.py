@@ -16,7 +16,7 @@ class Mars(object):
         self._width = planet_width
         
         if not isinstance(self._width, int) or not isinstance(self._height, int):
-            raise ValueError("The dimensions of a planet must be both integers, not %s and %s." % (self._width, self._height))
+            raise ValueError("The dimensions of a planet must be both integers, not %s and %s." % (type(self._width), type(self._height)))
 
         if self._width < 0 or self._height < 0:
             raise ValueError("The dimensions of a planet must be both positive integers.")
