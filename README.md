@@ -12,6 +12,9 @@
 5. [Usage](#usage)
     * [Unit Tests](#unit-tests)
 6. [Planned Optimizations](#planned-optimziations)
+    * [Mars](#mars)
+    * [Mission](#mission)
+    * [Rover](#rover)
 
 ## Overview
 This package simulates the NASA sending rover(s) on expedition to exotic locations far away from us. It allows the client to define the target planet properties, as well as the number of rovers that will be sent over, including the instructions they must execute once landed. 
@@ -208,6 +211,7 @@ In order to use pyrover:
 
 Here is a working example. The example assumes an input file called 'example.in' in the current working directory.
 ```python
+>>> cd <PYROVER_ROOT>
 >>> from pyrover.mission import Mission
 >>> input_file = 'example.in'
 >>> handle_mission = Mission(input_file)
@@ -242,4 +246,65 @@ OK
 ```
 
 ## Planned Optimizations
-@todo
+The pyrover package has just reached its first stable release, still there is much that can be done to get it better. What follow is a per module section with the optimizations that could be applied to make it better and more flexible to new features.
+
+#### Mars
+
+The following are optimizations that could be applied to the Mars module.
+
+ - Define attributes as properties
+	 - self._height
+	 - self._name
+	 - self._plateau
+	 - self._width
+
+ - Add a support structure to keep track of collisions. At the very moment, indeed, the module is keeping track of the IDs of the objects and their position. In order to find if an object collides with another, all the objects should be parsed. This is an O(N) operation that should be performed each time an object moves/reaches the end, depending if collisions are checked at each move or based on the final position only. In order to get an O(1) time, a second dictionary could be used. This would use the coordinates as a key and the objects that are currently in that position as values. This obviously requires more space and complexity, since each time an object moves, both structures should be updated. On the other hand, if new kind of objects are added, this could prove to be a good choice: if for example we add landmarks that a rover must discover, we would immediately find this out and be aware that object ID found it, without colliding with it (assuming a landmark is a non collision object).
+
+ - Add a Crashed exception to support objects colliding with each others.
+
+ - Refactor the test_str_correct test to use the auxiliary method to instantiate Mars objects.
+
+ - Add a plateau property that pretty-print on the standard output the surface of the planet and the position of the object on it, if any.
+
+ - Redefine the whole concept as that of destinations. The mission can have any kind of destination, not only planets. This would require a hierarchy of base (abstract) classes defining interfaces and properties common to their subclasses, but would open pyrover to more possibilities.
+```bash
+	├── destinations
+	│   ├── base.py
+	│   ├── __init__.py
+	│   └── planets
+	│       ├── base.py
+	│       ├── __init__.py
+	│       └── mars.py
+	├── __init__.py
+```
+
+#### Mission
+
+The following are optimizations that could be applied to the Mission module.
+
+ - Add a blueprints property to pritty-print the mission's blueprints.
+
+#### Rover
+
+The following are optimizations that could be applied to the Rover module.
+
+- Define attributes as properties
+
+- The instructions could be handled through a generator.
+	 - The rover could be able to self-assign itself instructions (randomly?) but still, never get the host running out of memory.
+
+- Redefine the whole concept as that of crew. The mission could have a crew made of different protagonists, including, but not limited to human beings and robots, each with its properties (movement, ...). In this sense 
+```bash
+	crew
+	├── base.py
+	├── humans
+	│   ├── base.py
+	│   └── __init__.py
+	├── __init__.py
+	├── mechs
+	│   ├── base.py
+	│   ├── __init__.py
+	│   └── rover.py
+	└── rover
+	    └── __init__.py
+```
