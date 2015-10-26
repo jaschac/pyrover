@@ -8,9 +8,10 @@
     * [Output](#output)
 3. [Package Description](#package-description)
     * [Modules](#modules)
-    * [Unit Tests](#unit-tests)
 4. [Setup](#setup)
 5. [Usage](#usage)
+    * [Unit Tests](#unit-tests)
+6. [Planned Optimizations](#planned-optimziations)
 
 ## Overview
 This package simulates the NASA sending rover(s) on expedition to exotic locations far away from us. It allows the client to define the target planet properties, as well as the number of rovers that will be sent over, including the instructions they must execute once landed. 
@@ -22,9 +23,11 @@ An expedition is made up of the following:
  - A **mission** which represents the overall operation. It includes a target destination as well as the crew that will be sent over. Each member of the crew is given instructions to execute upon landing.
 
 #### Development
-The pyrover package has been developed with the following setuo:
+The pyrover package has been developed with the following setup:
 
- - Debian 7 Wheezy (3.2.68-1+deb7u5 x86_64)
+ - Debian
+	 - Wheezy (3.2.68-1+deb7u5 x86_64)
+	 - Jessie (3.16.7-ckt11-1+deb8u5 x86_64)
  - Python 3.4.3
 	 - pip 7.1.2
 	 - virtualenv 13.1.2
@@ -144,28 +147,6 @@ There are two operations that can be performed on a rover, once created:
  - The rover can be sent to the target destination. This operation is responsible of the landing of the rover onto the surface of the target planet. Since the landing co-ordinates could be wrong, the rover could get lost during this phase. When this happens, it won't be able to execute any instruction and its position is unknown.
  - The rover can be told to execute the instructions it was given when created. Starting from the landing zone, it will execute all of them, one by one, sequentially. At each step the rover can end up out of the planet surface. When this happens, the rover is lost. Its last known position is still available to the NASA. If the rover is instead able to fully complete its job, its final position is also known.
 
-#### Unit Tests
-Each module comes with its set of unit tests. The whole suite of tests should be executed before merging and branch into the master.
-```bash
-# running the unit tests of the Mars module
-$ python -m pyrover.tests.mars
-----------------------------------------------------------------------
-Ran 11 tests in 0.001s
-OK
-
-# running all of them
-$ for module in rover mars mission; do python -m pyrover.tests.$module; done
-----------------------------------------------------------------------
-Ran 27 tests in 0.005s
-OK
-----------------------------------------------------------------------
-Ran 11 tests in 0.001s
-OK
-----------------------------------------------------------------------
-Ran 8 tests in 0.002s
-OK
-```
-
 ## Setup
 In order to use pyrover, the module itself, and its dependencies, must be installed first. This should be done in a virtual environment, since this would rule out different versions of Python and packages colliding.
 
@@ -214,3 +195,28 @@ Here is a working example. The example assumes an input file called 'example.in'
 1 3 N
 5 1 E
 ```
+
+#### Unit Tests
+Each module comes with its set of unit tests. The whole suite of tests should be executed before merging and branch into the master.
+```bash
+# running the unit tests of the Mars module
+$ python -m pyrover.tests.mars
+----------------------------------------------------------------------
+Ran 11 tests in 0.001s
+OK
+
+# running all of them
+$ for module in rover mars mission; do python -m pyrover.tests.$module; done
+----------------------------------------------------------------------
+Ran 27 tests in 0.005s
+OK
+----------------------------------------------------------------------
+Ran 11 tests in 0.001s
+OK
+----------------------------------------------------------------------
+Ran 8 tests in 0.002s
+OK
+```
+
+## Planned Optimizations
+@todo
