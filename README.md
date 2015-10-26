@@ -92,7 +92,7 @@ This module represents the surface over which the rover(s) will land and move. T
  - A name.
  - A two-dimensional size, represented by x and y.
  - An implicit rectangular shape, with the aforementioned size.
- - A surface, also referred to as plateau, which tracks the objects that are currently over it. Each object is tracked through a unique ID and its co-ordinates. 
+ - A surface, also referred to as plateau, which tracks the objects that are currently over it. Each object is tracked through a unique ID and its co-ordinates.
 ```bash
 	0,Y             X,Y
 	+---+---+---+---+
@@ -117,7 +117,30 @@ The module has no knowledge of the objects that are over it, and thus of their p
 
  - Calculating the (new) position co-ordinates.
  - Handling any exception raised by the planet when interacting with it.
- 
+
+
+##### Mission
+This module represent a NASA mission. The mission has several protagonists:
+
+ - The mission's blueprints, that is the instructions that allow the NASA to properly setup the mission itself. These blueprints, which come in the form a properly formatted input file, provide information about the target destination and the crew that is sent over there.
+ - A crew, whose members are limited to rovers. Each rover is assigned a landing zone, represented by x,y co-ordinates and a facing direction, and a set of optional instructions that it will execute once it has safely landed onto the surface.
+ - A destination, which is Mars.
+
+All the information to setup a Mission are expected to be provided through an input file, as stated in the Problem.
+
+ - The first line of the input file is a space-separated list of 2 values, representing the size of the destination planet.
+ - The following lines are optional. They do represent details about each and every rover to be sent to Mars.
+ 	 - Each rover is represented by two lines.
+ 	 	 - The first line is a space-separated list of three values, representing, in order, the x and y landing coordinates and the cardinal point it will be facing upon arrival.
+ 	 	 - The second line, optional, is a string representing the instructions to execute once it has safely landed onto the surface.
+
+A mission is made up of two phases:
+
+ - The setup, which is responsible of getting through the mission's blueprints and generate the resources for the mission itself.
+ - The start, which is responsible of sending the rovers to the target planet and instruct them to execute the commands they were assigned to.
+
+The results achieved by the rovers represent the outcome of the Mission. 
+
 ##### Rover
 This class represents the only crew member available to participate to a NASA's mission. It represent a robotic machine that is sent over to the target destination and that, if able to safely land at the desired co-ordinates, will execute instructions.
 
